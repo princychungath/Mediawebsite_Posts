@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <div class="container-lg">
+    <div class="row justify-content-center" style="margin-left: 200px;">
+      <div class="col-md-8">
+        <h2 class="mt-4">Post Details</h2>
+        <hr>
+        <div>
+          <h3>{{ post.Post_caption }}</h3>
+          <p>Publication Date: {{ post.publication_date }}</p>
+          <p>Location: {{ post.location_post }}</p>
+          <img src="{{ post.image_or_video_content.url }}" alt="Post Image" width="500px">
+        </div>
+        <div class="text-center mt-2">
+          <a href="{% url 'update'  post.id %}" class="btn btn-sm btn-primary">Update</a>
+          <a href="{%  url 'delete' post.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
