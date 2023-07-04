@@ -8,12 +8,12 @@ from django.contrib.auth.views import LogoutView
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
 from .forms import PostForm
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 def home(request):
     return render(request, 'base.html')
-
-
 
 def login_view(request):
     if request.method == 'POST':
@@ -51,15 +51,25 @@ def logout_view(request):
 
 
 @login_required
-def add_post(request):
+def add_post(request): 
+    form = PostForm()
     if request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        form = PostForm(request.POST,request.FILES)
         if form.is_valid():
-            form.save()
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            email_to=[request.user.username]
+
+            subject= 'New Post Created'
+            message = f"Post Caption:  {post.Post_caption}\n\nDescription:  {post.image_or_video_content}"
+            send_mail(
+                subject,message,settings.DEFAULT_FROM_EMAIL,email_to)
             return redirect('view_posts')
     else:
         form = PostForm()
-    return render(request, 'media_app/addpost.html', {'form': form})
+    return render(request, 'media_app/addpost.html', {'form': form})      
+        
 
 @login_required
 def view_posts(request):
